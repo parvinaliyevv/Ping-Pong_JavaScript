@@ -71,7 +71,7 @@ const gameBall = {
         gameBall.height = 20;
         gameBall.width = 20;
         gameBall.posY = gameBoard.height / 2 - gameBall.height / 2;
-        gameBall.posX = gameBoard.height / 2 - gameBall.width / 2;
+        gameBall.posX = gameBoard.width / 2 - gameBall.width / 2;
         gameBall.speedX = -5;
         gameBall.speedY = -5;
 
@@ -79,30 +79,27 @@ const gameBall = {
     },
 
     move() {
-        if (gameBall.posX < 0 || gameBall.posX > gameBoard.width - gameBall.width) gameBall.speedX *= -1;
-        if (gameBall.posY < 0 || gameBall.posY > gameBoard.height - gameBall.height) gameBall.speedY *= -1;
+        if (gameBall.posY <= 0 || gameBall.posY >= gameBoard.height - gameBall.height) gameBall.speedY *= -1;
 
         if (gameBall.posX <= firstPlayerBar.posX + firstPlayerBar.width && gameBall.posY + gameBall.height >= firstPlayerBar.posY && gameBall.posY <= firstPlayerBar.posY + firstPlayerBar.height) {
             
-            if (gameBall.posY + gameBall.height <= firstPlayerBar.posY + 10 && gameBall.speedY > 0) gameBall.speedY *= -1;
-            else if (gameBall.posY >= firstPlayerBar.posY + firstPlayerBar.height - 10 && gameBall.speedY < 0) gameBall.speedY *= -1;
-
-            gameBall.speedX *= -1;
+            (gameBall.speedY < 0) ? gameBall.speedY-- : gameBall.speedY++;
 
             gameBall.speedX--;
-            
-            (gameBall.speedY < 0) ? gameBall.speedY-- : gameBall.speedY++;
+            gameBall.speedX *= -1;
+
+            if (gameBall.posY + gameBall.height <= firstPlayerBar.posY + 10 && gameBall.speedY > 0) gameBall.speedY *= -1;
+            else if (gameBall.posY >= firstPlayerBar.posY + firstPlayerBar.height - 10 && gameBall.speedY < 0) gameBall.speedY *= -1;
         }
         else if (gameBall.posX + gameBall.width >= secondPlayerBar.posX && gameBall.posY + gameBall.height >= secondPlayerBar.posY && gameBall.posY <= secondPlayerBar.posY + secondPlayerBar.height) {
             
-            if (gameBall.posY + gameBall.height <= secondPlayerBar.posY + 10 && gameBall.speedY > 0) gameBall.speedY *= -1;
-            else if (gameBall.posY >= secondPlayerBar.posY + secondPlayerBar.height - 10 && gameBall.speedY < 0) gameBall.speedY *= -1;
-            
-            gameBall.speedX *= -1;
+            (gameBall.speedY < 0) ? gameBall.speedY-- : gameBall.speedY++;
 
             gameBall.speedX++;
-            
-            (gameBall.speedY < 0) ? gameBall.speedY-- : gameBall.speedY++;
+            gameBall.speedX *= -1;
+
+            if (gameBall.posY + gameBall.height <= secondPlayerBar.posY + 10 && gameBall.speedY > 0) gameBall.speedY *= -1;
+            else if (gameBall.posY >= secondPlayerBar.posY + secondPlayerBar.height - 10 && gameBall.speedY < 0) gameBall.speedY *= -1;
         }
 
         gameBall.posX += gameBall.speedX;
@@ -249,12 +246,12 @@ document.onkeydown = function(e) {
 };
 
 document.onkeyup = function (e) {
-    firstPlayerBar.direction = null;
-    secondPlayerBar.direction = null;
+    if (e.keyCode == 87 || e.keyCode == 83) firstPlayerBar.direction = null;
+    else if (e.keyCode == 38 || e.keyCode == 40) secondPlayerBar.direction = null;
 }
 
 window.onresize = function(e) {
-    if (document.documentElement.clientHeight < 600 && document.documentElement.clientWidth < 800) return;
+    if (document.documentElement.clientHeight < 400 || document.documentElement.clientWidth < 600) return;
 
     document.body.style.height = document.documentElement.clientHeight + "px";
 
@@ -262,9 +259,6 @@ window.onresize = function(e) {
     gameBall.reset();
     firstPlayerBar.reset();
     secondPlayerBar.reset();
-
-    document.body.style.alignItems = "center";
-    document.body.style.justifyContent = "center";
 
     gameBoard.show();
     gameBall.show();
@@ -275,20 +269,19 @@ window.onresize = function(e) {
 function game() {
     if (gameBall.posX <= 0 || gameBall.posX + gameBall.width >= gameBoard.width) {
 
-        if (gameBall.posX <= 0) secondPlayerBar.point++;
-        else firstPlayerBar.point++;
+        (gameBall.posX <= 0) ? secondPlayerBar.point++ : firstPlayerBar.point++;
 
         gameBall.reset();
         firstPlayerBar.reset();
         secondPlayerBar.reset();
+
+        gameBoard.show();
     }
 
     gameBall.move();
-
-    if (firstPlayerBar.direction != null) firstPlayerBar.move();
-    if (secondPlayerBar.direction != null) secondPlayerBar.move();
-
-    gameBoard.show();
+    firstPlayerBar.move();
+    secondPlayerBar.move();
+    
     gameBall.show();
     firstPlayerBar.show();
     secondPlayerBar.show();
