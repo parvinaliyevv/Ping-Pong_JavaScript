@@ -79,7 +79,8 @@ const gameBall = {
     },
 
     move() {
-        if (gameBall.posY <= 0 || gameBall.posY >= gameBoard.height - gameBall.height) gameBall.speedY *= -1;
+        if (gameBall.posY <= 0 && gameBall.speedY < 0) gameBall.speedY *= -1;
+        else if (gameBall.posY >= gameBoard.height - gameBall.height && gameBall.speedY > 0) gameBall.speedY *= -1;
 
         if (gameBall.posX <= firstPlayerBar.posX + firstPlayerBar.width && gameBall.posY + gameBall.height >= firstPlayerBar.posY && gameBall.posY <= firstPlayerBar.posY + firstPlayerBar.height) {
             
